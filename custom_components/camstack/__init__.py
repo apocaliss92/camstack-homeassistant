@@ -53,13 +53,18 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 def _build_iframe_url(hass: HomeAssistant, config: dict) -> str | None:
     """Build the iframe URL from config."""
     url_base = (config.get("url_base") or "").strip().rstrip("/")
+    _LOGGER.debug("CamStack _build_iframe_url: url_base=%r", url_base)
     if not url_base:
+        _LOGGER.warning("CamStack: url_base empty, panel will not be registered")
         return None
 
     if url_base.startswith("/"):
         base = hass.config.internal_url or "http://homeassistant.local:8123"
-        return f"{base.rstrip('/')}{url_base}"
-    return url_base
+        result = f"{base.rstrip('/')}{url_base}"
+    else:
+        result = url_base
+    _LOGGER.info("CamStack panel iframe_url=%s", result)
+    return result
 
 
 async def _register_frontend(hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -67,6 +72,7 @@ async def _register_frontend(hass: HomeAssistant, entry: ConfigEntry) -> None:
     config = {**entry.data, **entry.options}
     iframe_url = _build_iframe_url(hass, config)
     if not iframe_url:
+        _LOGGER.warning("CamStack: no iframe_url, skipping panel registration")
         return
 
     root = os.path.join(hass.config.path("custom_components"), DOMAIN)

@@ -14,11 +14,15 @@ class CamstackPanel extends HTMLElement {
     this._loadTimeout = null;
   }
 
+  connectedCallback() {
+    console.log(LOG, "connectedCallback");
+  }
+
   set config(c) {
     this._config = c;
-    console.log(LOG, "config set", { hasUrl: !!c?.url, url: c?.url });
+    console.log(LOG, "config set", { hasUrl: !!c?.url, url: c?.url, fullConfig: c });
     if (!c?.url) {
-      console.warn(LOG, "config missing url, skipping");
+      console.warn(LOG, "config missing url, skipping. Config keys:", c ? Object.keys(c) : "null");
       return;
     }
     const url = c.url;
@@ -78,6 +82,12 @@ class CamstackPanel extends HTMLElement {
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(container);
     console.log(LOG, "iframe appended to shadowRoot");
+
+    setTimeout(() => {
+      if (!loaded) {
+        console.log(LOG, "2s check: iframe not yet loaded");
+      }
+    }, 2000);
   }
 
   get config() {
