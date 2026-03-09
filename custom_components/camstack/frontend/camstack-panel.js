@@ -3,9 +3,12 @@
  * Displays CamStack in a fullscreen iframe.
  * Debug: add ?debug=1 to HA URL to show iframe URL and load status.
  */
+const LOG = "[CamStackPanel]";
+
 class CamstackPanel extends HTMLElement {
   constructor() {
     super();
+    console.log(LOG, "constructor");
     this.attachShadow({ mode: "open" });
     this._config = null;
     this._loadTimeout = null;
@@ -13,9 +16,14 @@ class CamstackPanel extends HTMLElement {
 
   set config(c) {
     this._config = c;
-    if (!c?.url) return;
+    console.log(LOG, "config set", { hasUrl: !!c?.url, url: c?.url });
+    if (!c?.url) {
+      console.warn(LOG, "config missing url, skipping");
+      return;
+    }
     const url = c.url;
     const showDebug = window.location.search.includes("debug=1");
+    console.log(LOG, "creating iframe", url, "showDebug:", showDebug);
 
     const iframe = document.createElement("iframe");
     iframe.src = url;
@@ -49,12 +57,19 @@ class CamstackPanel extends HTMLElement {
     let loaded = false;
     iframe.onload = () => {
       loaded = true;
+      console.log(LOG, "iframe onload");
       if (this._loadTimeout) clearTimeout(this._loadTimeout);
       this._loadTimeout = null;
     };
 
+    iframe.onerror = (e) => {
+      console.error(LOG, "iframe onerror", e);
+    };
+
     this._loadTimeout = setTimeout(() => {
+      console.log(LOG, "load timeout fired, loaded:", loaded);
       if (!loaded) {
+        console.warn(LOG, "iframe did not load within 12s, showing error");
         errorEl.style.display = "block";
       }
       this._loadTimeout = null;
@@ -62,6 +77,7 @@ class CamstackPanel extends HTMLElement {
 
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(container);
+    console.log(LOG, "iframe appended to shadowRoot");
   }
 
   get config() {
@@ -69,4 +85,9 @@ class CamstackPanel extends HTMLElement {
   }
 }
 
-customElements.define("camstack-panel", CamstackPanel);
+try {
+  customElements.define("camstack-panel", CamstackPanel);
+  console.log(LOG, "custom element registered");
+} catch (e) {
+  console.error(LOG, "failed to register custom element:", e);
+}
