@@ -1,5 +1,6 @@
 """CamStack integration for Home Assistant."""
 
+import logging
 import os
 
 from homeassistant.components import frontend, panel_custom
@@ -11,6 +12,8 @@ from homeassistant.helpers import config_validation as cv
 
 from .const import DOMAIN, PANEL_FILENAME, PANEL_NAME, PANEL_URL
 from .frontend import async_register_card
+
+_LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -70,9 +73,16 @@ async def _register_frontend(hass: HomeAssistant, entry: ConfigEntry) -> None:
     panel_path = os.path.join(root, "frontend", PANEL_FILENAME)
 
     if os.path.isfile(panel_path):
-        await hass.http.async_register_static_paths(
-            [StaticPathConfig(PANEL_URL, panel_path, cache_headers=False)]
-        )
+        try:
+            await hass.http.async_register_static_paths(
+                [StaticPathConfig(PANEL_URL, panel_path, cache_headers=False)]
+            )
+        except RuntimeError as err:
+            err_msg = str(err)
+            if "already" in err_msg.lower() or "never be executed" in err_msg:
+                _LOGGER.debug("Panel path %s already registered: %s", PANEL_URL, err)
+            else:
+                raise
 
     await panel_custom.async_register_panel(
         hass,
