@@ -18,7 +18,13 @@ npm run version:minor   # 0.1.0 → 0.2.0
 npm run version:major   # 0.1.0 → 1.0.0
 ```
 
-Release: create a Git tag (e.g. `v0.1.0`) and GitHub release. HACS and the addon store use tags for versioning.
+**Release (required for HACS):** Create a GitHub Release with a semver tag (e.g. `v0.1.0`). Without a release, HACS uses the commit SHA and will fail with "version can not be used with HACS".
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+# Then create a GitHub Release from the tag at github.com/.../releases/new
+```
 
 ## Contents
 
