@@ -9,9 +9,9 @@
     "frontend",
     "http"
   ],
-  "documentation": "https://github.com/apocaliss92/camstack-homeassistant#readme",
+  "documentation": "https://github.com/camstack/homeassistant-component#readme",
   "integration_type": "service",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/apocaliss92/camstack-homeassistant/issues",
+  "issue_tracker": "https://github.com/camstack/homeassistant-component/issues",
   "version": "0.1.6"
 }

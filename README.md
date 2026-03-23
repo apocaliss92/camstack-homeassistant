@@ -1,6 +1,6 @@
 # CamStack for Home Assistant
 
-Integration for [CamStack](https://github.com/apocaliss92/camstack) — universal video feed aggregator for surveillance cameras.
+Integration for [CamStack](https://github.com/camstack/homeassistant-component) — universal video feed aggregator for surveillance cameras.
 
 ## Versioning
 
@@ -33,7 +33,7 @@ git push origin v0.1.0
 ## Installation
 
 1. Add this repository to HACS: **Integrations** → **⋮** → **Custom repositories**
-2. Add: `https://github.com/apocaliss92/camstack-homeassistant`
+2. Add: `https://github.com/camstack/homeassistant-component`
 3. Search for "CamStack" and install
 4. Restart Home Assistant
 5. Go to Settings → Devices & Services → Add Integration → CamStack
